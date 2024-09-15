@@ -9,7 +9,7 @@ class LevelController extends Controller
 {
     public function index()
     {
-        $row = DB::delete('delete from m_level where level_kode = ?', ['CUS']);
-        return 'Delete data berhasil. Jumlah data yang diupdate: ' .$row. ' baris';
+        $data = DB::select('select * from m_level');
+        return view('level', ['data' => $data]);
     }
 }
