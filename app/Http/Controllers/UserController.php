@@ -23,7 +23,9 @@ class UserController extends Controller
         ];
 
         $activeMenu = 'user'; // set menu yang sedang aktif
+
         $level = LevelModel::all(); //ambil data level untuk filter level
+
         return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level ,'activeMenu' => $activeMenu]);
     }
 
@@ -37,6 +39,7 @@ class UserController extends Controller
         if ($request->level_id) {
             $users->where('level_id', $request->level_id);
         } 
+        
         return DataTables::of($users)
             // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
             ->addIndexColumn()
@@ -158,30 +161,5 @@ class UserController extends Controller
             return redirect('/user')->with('error', 'Data user gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
         }
     }
-    //Menampilkan halaman awal user
-    public function search()
-    {
-        $breadcrumb = (object) [
-            'title' => 'Daftar User',
-            'list' => ['Home', 'User']
-        ];
-
-        $page = (object) [
-            'title' => 'Daftar user yang terdaftar dalam sistem'
-        ];
-
-        // Perbaikan typo pada $activeMenu
-        $activeMenu = 'user'; 
-
-        $level = LevelModel::all();
-
-        return view('user.index', [
-            'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'level' => $level,
-            'activeMenu' => $activeMenu
-        ]);
-    }
-
 
 }
