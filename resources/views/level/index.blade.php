@@ -5,7 +5,7 @@
     <div class="card-header">
         <h3 class="card-title">{{ $page->title }}</h3>
         <div class="card-tools">
-            <a class="btn btn-sm btn-primary mt-1" href="{{ url('supplier/create') }}">Tambah Supplier</a>
+            <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah Level</a>
         </div>
     </div>
 
@@ -22,57 +22,79 @@
                 <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Filter:</label>
                     <div class="col-3">
-                        <input type="text" id="supplier_id" class="form-control" placeholder="Masukkan ID Supplier" required>
-                        <small class="form-text text-muted">Filter berdasarkan ID Supplier</small>
-                    </div>
-                    <div class="col-auto">
-                        <button class="btn btn-primary" id="filterButton">Terapkan Filter</button>
+                        <select class="form-control" id="level_filter" name="level_filter" required>
+                            <option value="">- Semua -</option>
+                            @foreach ($level as $item)
+                                <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">Filter berdasarkan Level</small>
                     </div>
                 </div>
             </div>
         </div>
 
-        <table class="table table-bordered table-striped table-hover table-sm" id="supplierTable">
+        <table class="table table-bordered table-striped table-hover table-sm" id="table_level">
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Kode Supplier</th>
-                    <th>Nama Supplier</th>
-                    <th>Alamat Supplier</th>
+                    <th>ID</th>
+                    <th>Kode Level</th>
+                    <th>Nama Level</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
         </table>
     </div>
 </div>
-
 @endsection
 
-@push('scripts')
+@push('css')
+<!-- Tambahkan custom CSS di sini jika diperlukan -->
+@endpush
+
+@push('js')
 <script>
     $(document).ready(function() {
-        var supplierTable = $('#supplierTable').DataTable({
-            processing: true,
+        var dataLevel = $('#table_level').DataTable({
             serverSide: true,
             ajax: {
-                url: '{{ url("supplier/list") }}',
-                type: 'POST',
-                data: function(d) {
-                    d.supplier_id = $('#supplier_id').val(); // Mengambil input filter
+                "url": "{{ url('level/list') }}",
+                "dataType": "json",
+                "type": "POST",
+                "data": function(d) {
+                    d.level_filter = $('#level_filter').val();
                 }
             },
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'supplier_kode', name: 'supplier_kode' },
-                { data: 'supplier_nama', name: 'supplier_nama' },
-                { data: 'supplier_alamat', name: 'supplier_alamat' },
-                { data: 'aksi', name: 'aksi', orderable: false, searchable: false }
+                {
+                    data: "level_id",
+                    className: "text-center",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "level_kode",
+                    className: "",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "level_nama",
+                    className: "",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "aksi",
+                    className: "",
+                    orderable: false,
+                    searchable: false
+                }
             ]
         });
 
-        // Event listener untuk filter
-        $('#filterButton').click(function() {
-            supplierTable.ajax.reload(); // Reload data dengan filter
+        $('#level_filter').on('change', function() {
+            dataLevel.ajax.reload();
         });
     });
 </script>
