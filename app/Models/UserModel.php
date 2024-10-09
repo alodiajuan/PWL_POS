@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable; // implementasi class Authenticatable
 
-class UserModel extends Model
+class UserModel extends Authenticatable
 {
     use HasFactory;
 
     protected $table = 'm_user'; //Mendefinisikan nama tabel yang digunakan oleh model ini
     protected $primaryKey = 'user_id'; //Mendefinisikan primary key tabel yang digunakan
-    /**
-     * The attibutes that are mass assignable.
-     *  
-     * @var array
-     */
-    protected $fillable = ['level_id', 'username', 'nama', 'password'];
+    protected $fillable = ['username', 'password', 'nama', 'level_id', 'created_at', 'updated_at'];
+
+    protected $hidden = ['password'];
+
+    protected $casts = ['password' => 'hashed']; //Mengatur field yang tidak akan ditampilkan ketika
 
     public function level(): BelongsTo
     {

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\AuthController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -20,6 +21,16 @@ use App\Http\Controllers\BarangController;
 // Route::get('/user/ubah/{id}', [UserController::class, 'ubah']);
 // Route::put('/user/ubah_simpan/{id}', [UserController::class, 'ubah_simpan']);
 // Route::get('/user/hapus/{id}', [UserController::class, 'hapus']);
+
+Route::pattern('id', '[0-9]+');
+
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postLogin']);
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+
+Route::middleware(['auth'])->group(function(){
+    
+});
 
 Route::get('/', [WelcomeController::class, 'index']);
 
@@ -126,3 +137,5 @@ Route::group(['prefix' => 'barang'], function () {
     Route::put('{id}', [BarangController::class, 'update']); //menyimpan perubahan data user
     Route::delete('{id}', [BarangController::class, 'destroy']); //menghapus data user
 });
+
+
