@@ -19,4 +19,7 @@ use App\Http\Controllers\Api\RegisterController;
 //     return $request->user();
 // });
 Route::post('/register', App\Http\Controllers\Api\RegisterController::class)->name('register');
-Route::get('/register', App\Http\Controllers\Api\RegisterController::class)->name('register');
+Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
+Route::middleware('auth:api')->get('/user', function (Request $request){
+    return $request->user();
+});
