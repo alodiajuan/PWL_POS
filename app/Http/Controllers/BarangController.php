@@ -72,22 +72,37 @@ class BarangController extends Controller
     // Menyimpan data barang baru
     public function store(Request $request)
     {
-        $request->validate([
-            'barang_kode' => 'required|string|unique:m_barang,barang_kode',
-            'barang_nama' => 'required|string|max:100',
-            'harga_beli' => 'required|integer',
-            'harga_jual' => 'required|integer',
-            'kategori_id' => 'required|integer'
+        $validator = Validator::make($request->all(), [
+            'kategori_id'   => 'required|integer',
+            'barang_kode'   => 'required|string|min:3|unique:m_barang,barang_kode',
+            'barang_nama'   => 'required|string|max:100', //nama harus diisi, berupa string, dan maksimal 100 karakter
+            'harga_beli'    => 'required|integer', //nama harus diisi, berupa string, dan maksimal 100 karakter
+            'harga_jual'    => 'required|integer',
+            'profile_image'         => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
         ]);
-        BarangModel::create([
-            'barang_kode' => $request->barang_kode,
-            'barang_nama' => $request->barang_nama,
-            'harga_beli' => $request->harga_beli,
-            'harga_jual' => $request->harga_jual,
-            'kategori_id' => $request->kategori_id
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $profile_image = $request->profile_image;
+        $barang = BarangModel::create([
+            'kategori_id'   => $request->kategori_id,
+            'barang_kode'   => $request->barang_kode,
+            'barang_nama'   => $request->barang_nama,
+            'harga_beli'    => $request->harga_beli,
+            'harga_jual'    => $request->harga_jual,
+            'profile_image'         => $profile_image->hashName()
         ]);
-        return redirect('/barang')->with('success', 'Data barang berhasil disimpan');
+        if ($barang) {
+            return response()->json([
+                'success'   => true,
+                'barang'      => $barang,
+            ],201);
+        }
+        return response()->json([
+            'success'   => false,
+        ],409);
     }
+
 
     // Menampilkan detail barang
     public function show(string $id)
